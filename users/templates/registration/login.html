@@ -1,0 +1,25 @@
+<!--{% load static %}-->
+<!--<head>-->
+<!--    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">-->
+<!--    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">-->
+<!--    <link rel="stylesheet" href="{% static 'css/main.css' %}">-->
+<!--</head>-->
+{% if invalid %}
+Incorrect username or password
+{% endif %}
+<form method="post" action="">
+{% csrf_token %}
+    <table>
+    <tr>
+        <td>{{ form.email.label_tag }}</td>
+        <td>{{ form.email }}</td>
+    </tr>
+    <tr>
+        <td>{{ form.password.label_tag }}</td>
+        <td>{{ form.password }}</td>
+    </tr>
+    </table>
+    <button class="btn" type="submit" value="Login">Login</button>
+<input type="hidden" name="next" value="{{ next }}">
+</form>
+<div>If you don't have an account, you can <a href="{% url 'signup' %}">register</a> here.</div>

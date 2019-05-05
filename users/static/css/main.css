@@ -1,0 +1,20 @@
+.header-navbar {
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+    width: 600px;
+    justify-content: space-around;
+    border: 3px solid;
+}
+.submenu {
+    display: none;
+}
+.navbar-item:hover {
+    cursor: pointer;
+}
+.navbar-item:hover > ul.submenu {
+    display: block;
+    position:absolute;
+    list-style: none;
+}
+
