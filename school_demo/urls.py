@@ -3,7 +3,7 @@ from django.contrib import admin
 
 from django.views.generic.base import TemplateView
 
-from dashboards.views import search_by_major, search_by_company, search_by_name, test_matplotlib
+from dashboards.views import search_by_major, search_by_company, search_by_name  #, test_matplotlib
 
 urlpatterns = [
     # Examples:
