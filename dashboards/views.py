@@ -82,27 +82,27 @@ def search_by_name(request):
 
     return render(request, 'name-search.html', context)
 
-from pylab import figure, axes, pie, title
-from matplotlib.backends.backend_agg import FigureCanvasAgg
-import matplotlib.pyplot as plt
-from django.http import HttpResponse
-import io
-
-def test_matplotlib(request):
-    f = figure(figsize=(6,6))
-
-    ax = axes([0.1, 0.1, 0.8, 0.8])
-    labels = 'Frogs', 'Hogs', 'Dogs', 'Logs'
-    fracs = [15,30,45, 10]
-    explode=(0, 0.05, 0, 0)
-    pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%', shadow=True)
-    title('Random data', bbox={'facecolor':'0.8', 'pad':5})
-
-    FigureCanvasAgg(f)
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png')
-    plt.close(f)
-    response = HttpResponse(buf.getvalue(), content_type='image/png')
-    return response
+# from pylab import figure, axes, pie, title
+# from matplotlib.backends.backend_agg import FigureCanvasAgg
+# import matplotlib.pyplot as plt
+# from django.http import HttpResponse
+# import io
+#
+# def test_matplotlib(request):
+#     f = figure(figsize=(6,6))
+#
+#     ax = axes([0.1, 0.1, 0.8, 0.8])
+#     labels = 'Frogs', 'Hogs', 'Dogs', 'Logs'
+#     fracs = [15,30,45, 10]
+#     explode=(0, 0.05, 0, 0)
+#     pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%', shadow=True)
+#     title('Random data', bbox={'facecolor':'0.8', 'pad':5})
+#
+#     FigureCanvasAgg(f)
+#     buf = io.BytesIO()
+#     plt.savefig(buf, format='png')
+#     plt.close(f)
+#     response = HttpResponse(buf.getvalue(), content_type='image/png')
+#     return response
 
 # sudo apt-get install python3-tk
