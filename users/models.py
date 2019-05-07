@@ -14,7 +14,7 @@ GENDER_CHOICES = (
 )
 
 DEGREE_CHOICES = (
-    ('0', 'MD'),
+    ('0', 'MS'),
     ('1', 'MBA'),
     ('2', 'BBA')
 )
@@ -62,7 +62,7 @@ class Company(models.Model):
         return self.company_name
 
 class StudentCareer(models.Model):
-    company = models.OneToOneField(Company, on_delete=models.CASCADE, blank=True, null=True )
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True )
     job_role = models.CharField(max_length=100, blank=True, null=True)
     employment_start_date = models.DateField(blank=True, null=True)
     employment_end_date = models.DateField(blank=True, null=True)
