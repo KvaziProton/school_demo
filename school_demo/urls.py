@@ -15,6 +15,6 @@ urlpatterns = [
     url(r'^major-search', search_by_major, name='major-search'),
     url(r'^company-search', search_by_company, name='company-search'),
     url(r'^name-search', search_by_name, name='name-search'),
-    url(r'^pie/', test_matplotlib, name='test-pie'),
+    # url(r'^pie/', test_matplotlib, name='test-pie'),
     url(r'^faq', TemplateView.as_view(template_name='faq.html'), name='faq')
 ]
