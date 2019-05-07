@@ -61,14 +61,18 @@
 </table>
     <p><input type="submit" value="Save"></p>
 </form>
-{% if not careers %}
+{% if creation %}
 <p>Please, fill in info to be able to add career info</p>
 {% else %}
 {% for career in careers %}
     <table>
         <tr>
+            <td>Company name: </td>
+            <td>{{ career.company }}</td>
+        </tr>
+        <tr>
             <td>Job name: </td>
-            <td>{{ career.job_title }}</td>
+            <td>{{ career.job_role }}</td>
         </tr>
         <tr>
             <td>Employment start date: </td>
@@ -91,6 +95,6 @@
     </table>
 <br>
 {% endfor %}
-<a href="{% url 'add-career' %}">Add career</a>
+{% if not user.is_superuser %}<a href="{% url 'add-career' %}">Add career</a>{%endif%}
 {% endif %}
 <a href="{% url 'dashboard' %}">Go back</a>

@@ -11,14 +11,24 @@
         <div>Home</div>
         <div class="navbar-item">Profile
         <ul class="submenu">
-            <li><a href="{% url 'profile' %}">Edit</a></li>
+            <li><a href="{% if user.is_superuser %}{% url 'admin-profile' %}{%else%}{% url 'profile' %}{% endif %}">Edit</a></li>
         </ul>
         </div>
+        {% if user.is_superuser %}
+        <div class="navbar-item">Reports
+        <ul class="submenu">
+            <li><a href="{% url 'test-pie' %}">Placement rate</a></li>
+            <li><a href="{% url 'name-search' %}">Popular industries</a></li>
+            <li><a href="{% url 'major-search' %}">Average salary</a></li>
+            <li><a href="{% url 'major-search' %}">Major's popularity</a></li>
+        </ul>
+        </div>
+        {% endif %}
         <div class="navbar-item">Search
         <ul class="submenu">
-            <li><a href="">By company</a></li>
-            <li><a href="">By name</a></li>
-            <li><a href="">By department</a></li>
+            <li><a href="{% url 'company-search' %}">By company</a></li>
+            <li><a href="{% url 'name-search' %}">By name</a></li>
+            <li><a href="{% url 'major-search' %}">By department</a></li>
         </ul>
         </div>
         <div class="navbar-item">Settings

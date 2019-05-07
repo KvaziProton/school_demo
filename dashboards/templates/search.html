@@ -1,0 +1,31 @@
+<form method="post" action="">
+    {% csrf_token %}
+    {{form}}
+    <input type="submit" value="Search">
+</form>
+<a href="{% url 'dashboard' %}">Go back</a>
+<br>
+{% if not init %}
+{% if not queryset %}
+No information regarding this was found.
+{% else %}
+<table>
+    <tr>
+        <td>Company name</td>
+        <td>Salary range</td>
+        <td>Job role</td>
+        <td>Industry</td>
+    </tr>
+{% for query in queryset %}
+    {% for q in query %}
+    <tr>
+        <td>{{ q.company }}</td>
+        <td>{{ q.get_salary_range_display  }}</td>
+        <td>{{ q.job_role }}</td>
+        <td>{{ q.company.industry_type }}</td>
+    </tr>
+    {% endfor %}
+{% endfor %}
+</table>
+{% endif %}
+{% endif %}

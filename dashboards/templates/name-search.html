@@ -1,0 +1,27 @@
+<form method="post" action="">
+    {% csrf_token %}
+    Input name: {{form.input}}
+    <input type="submit" value="Search">
+</form>
+<a href="{% url 'dashboard' %}">Go back</a>
+<br>
+{% if not init %}
+{% if not queryset %}
+No information regarding this was found.
+{% else %}
+<table>
+    <tr>
+        <td>Student name</td>
+        <td>Degree</td>
+        <td>Phone number</td>
+    </tr>
+{% for q in queryset %}
+    <tr>
+        <td>{{ q.user.first_name }} {{ q.user.middle_name }} {{ q.user.last_name }}</td>
+        <td>{{ q.get_degree_type_display }}</td>
+        <td>{{ q.user.studentprofile.phone_number}}</td>
+    </tr>
+{% endfor %}
+</table>
+{% endif %}
+{% endif %}

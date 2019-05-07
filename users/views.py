@@ -6,7 +6,7 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from .forms import SignUpForm, LoginForm, ProfileForm, CareerForm
+from .forms import SignUpForm, LoginForm, ProfileForm, CareerForm, AdminProfileForm
 from .models import CustomUser, StudentProfile, StudentCareer
 
 def sign_up(request):
@@ -19,6 +19,9 @@ def sign_up(request):
                                             cd['email'],
                                             cd['password'])
             user.role = cd['role']
+            if user.role == '0':  # admin user
+                user.is_superuser = True
+
             user.save()
 
             user = auth.authenticate(username=username,
@@ -56,7 +59,7 @@ def sign_in(request):
 class ProfileCreateView(LoginRequiredMixin, FormView):
     template_name = 'profile.html'
     form_class = ProfileForm
-    success_url = 'profile/add-career'
+    success_url = '/profile'
     user_fields = ['first_name', 'middle_name', 'last_name', 'email']
 
     def get_initial(self):
@@ -68,8 +71,9 @@ class ProfileCreateView(LoginRequiredMixin, FormView):
         try:
             profile = student.studentprofile
         except:
-            pass
+            initial['creation'] = True
         else:
+            initial['creation'] = False
             for value in self.form_class().fields.keys():
                 initial[value] = getattr(profile, value)
         finally:
@@ -87,7 +91,6 @@ class ProfileCreateView(LoginRequiredMixin, FormView):
         try:
             profile = student.studentprofile
         except:
-            print('in profile except')
             profile = form.save(commit=False)
             profile.user = student
             profile.save()
@@ -104,41 +107,87 @@ class ProfileCreateView(LoginRequiredMixin, FormView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         student = CustomUser.objects.get(username=str(user))
-        print(user)
         try:
-            careers = StudentCareer.objects.filter(user=student)
+            careers = StudentCareer.objects.filter(
+                user=student).order_by('employment_start_date')
         except:
             careers = []
         finally:
             context['careers'] = careers
-            print(careers)
             return context
 
-from django.forms import formset_factory
-from django.views.generic.base import View
 
 class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'dashboard.html'
+
 
 class CareerView(LoginRequiredMixin, FormView):
     template_name = 'add-career.html'
     form_class = CareerForm
     success_url = '/profile'
+    career_fields = ['job_role', 'employment_start_date', 'employment_end_date',
+                     'enrollment_status', 'salary_range']
+
+    def form_valid(self, form):
+        cd = form.cleaned_data
+        company = form.save()
+
+        user = self.request.user
+        student = CustomUser.objects.get(username=str(user))
+
+        career = StudentCareer()
+        for field in form.changed_data:
+            if field in self.career_fields:
+                setattr(career, field, cd[field])
+        career.save()
+        career.company = company
+        career.user = student
+        career.save()
+
+        return super().form_valid(form)
+
+class AdminProfileView(ProfileCreateView):
+    template_name = 'profile.html'
+    form_class = AdminProfileForm
+    success_url = '/profile/admin'
 
     def form_valid(self, form):
         user = self.request.user
+        admin = CustomUser.objects.get(username=str(user))
+        cd = form.cleaned_data
+        if form.has_changed():
+            for field in form.changed_data:
+                if field in self.user_fields:
+                    setattr(admin, field, cd[field])
+            admin.save()
+        try:
+            profile = admin.adminprofile
+        except:
+            profile = form.save(commit=False)
+            profile.user = admin
+            profile.save()
+        else:
+            if form.has_changed():
+                for field in form.changed_data:
+                    if field not in self.user_fields:
+                        setattr(profile, field, cd[field])
+                profile.save()
+        finally:
+            return super().form_valid(form)
+
+    def get_initial(self):
+        initial = {}
+        user = self.request.user
         student = CustomUser.objects.get(username=str(user))
-        career = form.save(commit=False)
-        career.user = student
-        career.save()
-        return super().form_valid(form)
-
-
-    # def get(self, request, *args, **kwargs):
-    #     return render(
-    #         request,
-    #         template_name='add-career.html',
-    #         context={'formset': CareerFormSet})
-    #
-    # def post(self, request,):
-
+        for value in self.user_fields:
+            initial[value] = getattr(student, value)
+        try:
+            profile = student.adminprofile
+        except:
+            initial['creation'] = True
+        else:
+            initial['creation'] = False
+            for value in self.form_class().fields.keys():
+                initial[value] = getattr(profile, value)
+        finally:
+            return initial

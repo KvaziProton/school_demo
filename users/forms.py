@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.contrib.auth.models import User
 
-from .models import CustomUser, ROLE_CHOICES, StudentProfile, StudentCareer, ROLE_CHOICES, ENROLLEMENT_STATUS_CHOICES
+from .models import CustomUser, StudentProfile, SALARY_RANGE_CHOICES, ROLE_CHOICES, ENROLLEMENT_STATUS_CHOICES, Company, AdminProfile
 
 class SignUpForm(forms.Form):
     email = forms.CharField(
@@ -69,22 +69,42 @@ class LoginForm(forms.Form):
             'class': 'form-control'
         }))
 
-from django.forms import modelformset_factory
-
 class CareerForm(forms.ModelForm):
+    job_role = forms.CharField()
+    employment_start_date = forms.CharField()
+    employment_end_date = forms.CharField(required=False)
+    enrollment_status = forms.ChoiceField(choices=ENROLLEMENT_STATUS_CHOICES)
+    salary_range = forms.ChoiceField(choices=SALARY_RANGE_CHOICES)
     class Meta:
-        model = StudentCareer
-        exclude = ['id', 'user']
+        model = Company
+        exclude = ['id', 'creation_date']
 
 class ProfileForm(forms.ModelForm):
     first_name = forms.CharField()
-    middle_name = forms.CharField()
-    last_name = forms.CharField(required=False)
+    middle_name = forms.CharField(required=False)
+    last_name = forms.CharField()
     email = forms.CharField()
 
     class Meta:
         model = StudentProfile
         exclude = ['user', 'career']
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if not email.endswith('@baruch.cuny.edu'):
+            raise forms.ValidationError('Use your Baruch hosted email')
+
+        return email
+
+class AdminProfileForm(forms.ModelForm):
+    first_name = forms.CharField()
+    middle_name = forms.CharField(required=False)
+    last_name = forms.CharField()
+    email = forms.CharField()
+
+    class Meta:
+        model = AdminProfile
+        exclude = ['user']
 
     def clean_email(self):
         email = self.cleaned_data['email']
