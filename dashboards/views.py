@@ -1,7 +1,16 @@
-from django.shortcuts import render
+import io
+from collections import Counter
+from datetime import timedelta
 
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic.edit import FormView
+import matplotlib
+matplotlib.use('Agg')
+import numpy as np
+from matplotlib import pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
+from pylab import figure, axes, pie, title
+
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render
 
 from .forms import SearchByMajorForm, SearchByInputForm
 from users.models import StudentCareer, StudentProfile, Major, Company, CustomUser
@@ -82,27 +91,159 @@ def search_by_name(request):
 
     return render(request, 'name-search.html', context)
 
-# from pylab import figure, axes, pie, title
-# from matplotlib.backends.backend_agg import FigureCanvasAgg
-# import matplotlib.pyplot as plt
-# from django.http import HttpResponse
-# import io
-#
-# def test_matplotlib(request):
-#     f = figure(figsize=(6,6))
-#
-#     ax = axes([0.1, 0.1, 0.8, 0.8])
-#     labels = 'Frogs', 'Hogs', 'Dogs', 'Logs'
-#     fracs = [15,30,45, 10]
-#     explode=(0, 0.05, 0, 0)
-#     pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%', shadow=True)
-#     title('Random data', bbox={'facecolor':'0.8', 'pad':5})
-#
-#     FigureCanvasAgg(f)
-#     buf = io.BytesIO()
-#     plt.savefig(buf, format='png')
-#     plt.close(f)
-#     response = HttpResponse(buf.getvalue(), content_type='image/png')
-#     return response
+def graduation_rate(request):
+    students = CustomUser.objects.filter(role='1')
+    count = 0
 
-# sudo apt-get install python3-tk
+    for student in students:
+        gr_date = student.studentprofile.graduation_date
+        first_emp_date = StudentCareer.objects.filter(
+            user=student).order_by('employment_start_date')[0].employment_start_date
+        if gr_date + timedelta(days=6 * 30) <= first_emp_date:
+            count += 1
+
+    res = count/(len(students)/100)
+
+    f = figure(figsize=(6,6))
+
+    ax = axes([0.1, 0.1, 0.8, 0.8])
+    labels = 'Frogs', 'Hogs'
+    fracs = [res, (100-res) ]
+    explode=(0, 0.05)
+    pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%', shadow=True)
+    title('Random data', bbox={'facecolor':'0.8', 'pad':5})
+
+    # FigureCanvasAgg(f)
+    buf = io.BytesIO()
+    plt.savefig(buf, format='pdf')
+    plt.close(f)
+    response = HttpResponse(buf.getvalue(), content_type='application/pdf')
+    return response
+
+def studend_per_industry_rate(request):
+    students = CustomUser.objects.filter(role='1')
+
+    industry_list = []
+    for student in students:
+        industry = StudentCareer.objects.filter(
+            user=student).order_by(
+            'employment_start_date')[0].company.industry_type
+
+        industry_list.append(industry)
+
+    labels = []
+    fracs = []
+
+    working_students = len(industry_list)
+    industries = set(industry_list)
+    counter = Counter(industry_list)
+
+    for industry in industries:
+        percent = counter[industry]/(working_students/100)
+        fracs.append(percent)
+        labels.append(industry)
+
+    f = figure(figsize=(6, 6))
+
+    ax = axes([0.1, 0.1, 0.8, 0.8])
+    explode = [0 for i in range(working_students)]
+    explode[1] = 0.05
+    pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%', shadow=True)
+    title('Student per industry rate', bbox={'facecolor': '0.8', 'pad': 5})
+
+    # FigureCanvasAgg(f)
+    buf = io.BytesIO()
+    plt.savefig(buf, format='pdf')
+    plt.close(f)
+    response = HttpResponse(buf.getvalue(), content_type='application/pdf')
+    return response
+
+def salary_rate_by_major(request):
+    majors = Major.objects.all()
+    res = {}
+    salary_range = {
+        '1':'50,000 to 60,000',
+        '2':'60,000 to 70,000',
+        '3': '70,000 to 80,000',
+        '4':'80,000 to 90,000',
+        '5':'90,000 to 100,000'
+    }
+    with PdfPages('users/static/files/salary_rate_by_major.pdf') as pdf:
+        for major in majors:
+            profiles = StudentProfile.objects.filter(major1=major)
+            if profiles:
+                res[major] = []
+                for profile in profiles:
+                    current_salary_range = StudentCareer.objects.filter(
+                        user=profile.user).order_by(
+                        'employment_start_date')[0].salary_range
+
+                    res[major].append(current_salary_range)
+
+                labels = []
+                fracs = []
+                counter = Counter(res[major])
+
+                for salary in set(res[major]):
+                    percent = counter[salary] / (len(res[major]) / 100)
+                    fracs.append(percent)
+                    labels.append(salary_range[salary])
+
+                figure(figsize=(6, 6))
+
+                ax = axes([0.1, 0.1, 0.8, 0.8])
+                explode = [0 for _ in range(len(res[major]))]
+                try:
+                    explode[1] = 0.05
+                except IndexError:
+                    pass
+                pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%',
+                    shadow=True, radius=0.8)
+                title('Salary rate by major: '+major.major_name,
+                      bbox={'facecolor': '0.8', 'pad': 5})
+                plt.gcf().subplots_adjust(bottom=0.15)
+                pdf.savefig()  # saves the current figure into a pdf page
+                plt.close()
+
+        # We can also set the file's metadata via the PdfPages object:
+        d = pdf.infodict()
+        d['Title'] = 'Salary range by major'
+
+    return HttpResponseRedirect('/static/files/salary_rate_by_major.pdf')
+
+def student_rate_by_major(request):
+    students = CustomUser.objects.filter(role='1')
+
+    majors = []
+    for student in students:
+        major1 = StudentProfile.objects.get(user=student).major1
+        major2 = StudentProfile.objects.get(user=student).major2
+
+        majors.append(major1)
+        if major2:
+            majors.append(major2)
+
+    counter = Counter(majors)
+
+    labels = []
+    fracs = []
+
+    for major in set(majors):
+        percent = counter[major] / (len(majors) / 100)
+        fracs.append(percent)
+        labels.append(major)
+
+    f = figure(figsize=(6, 6))
+
+    ax = axes([0.1, 0.1, 0.8, 0.8])
+    explode = [0 for _ in range(len(majors))]
+    explode[1] = 0.05
+    pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%', shadow=True)
+    title('Student per industry rate', bbox={'facecolor': '0.8', 'pad': 5})
+
+    # FigureCanvasAgg(f)
+    buf = io.BytesIO()
+    plt.savefig(buf, format='pdf')
+    plt.close(f)
+    response = HttpResponse(buf.getvalue(), content_type='application/pdf')
+    return response

@@ -17,10 +17,10 @@
         {% if user.is_superuser %}
         <div class="navbar-item">Reports
         <ul class="submenu">
-            <li><a href="">Placement rate</a></li>
-            <li><a href="">Popular industries</a></li>
-            <li><a href="">Average salary</a></li>
-            <li><a href="">Major's popularity</a></li>
+            <li><a href="{% url 'graduation-rate' %}">Placement rate</a></li>
+            <li><a href="{% url 'industry-rate' %}">Popular industries</a></li>
+            <li><a href="{% url 'salary-rate' %}">Average salary</a></li>
+            <li><a href="{% url 'major-rate' %}">Major's popularity</a></li>
         </ul>
         </div>
         {% endif %}
