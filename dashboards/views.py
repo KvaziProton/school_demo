@@ -174,21 +174,26 @@ def salary_rate_by_major(request):
         '4':'80,000 to 90,000',
         '5':'90,000 to 100,000'
     }
-    with PdfPages('users/static/files/salary_rate_by_major.pdf') as pdf:
+
+    with PdfPages(
+            '/home/TeachYourself/teachyourself.pythonanywhere.com/users/static/files/salary_rate_by_major.pdf') as pdf:
+        print(majors)
         for major in majors:
+            print(major)
+            res[major] = []
             profiles = StudentProfile.objects.filter(major1=major)
             if profiles:
-                res[major] = []
                 for profile in profiles:
-                    current_salary_range = StudentCareer.objects.filter(
-                        user=profile.user).order_by(
-                        'employment_start_date')[0].salary_range
+                    careers = StudentCareer.objects.filter(user=profile.user)
+                    if careers:
+                        current_salary_range = careers.order_by('employment_start_date')[0].salary_range
+                        res[major].append(current_salary_range)
 
                     res[major].append(current_salary_range)
-
                 labels = []
                 fracs = []
                 counter = Counter(res[major])
+                print(counter)
 
                 for salary in set(res[major]):
                     percent = counter[salary] / (len(res[major]) / 100)
@@ -205,7 +210,7 @@ def salary_rate_by_major(request):
                     pass
                 pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%',
                     shadow=True, radius=0.8)
-                title('Salary rate by major: '+major.major_name,
+                title('Salary rate by major: ' + major.major_name,
                       bbox={'facecolor': '0.8', 'pad': 5})
                 plt.gcf().subplots_adjust(bottom=0.15)
                 pdf.savefig()  # saves the current figure into a pdf page
