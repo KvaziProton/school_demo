@@ -71,7 +71,7 @@ def search_by_name(request):
     if request.method == 'POST':
         form = SearchByInputForm(request.POST)
         if form.is_valid():
-            names = form.cleaned_data['input'].lower()
+            names = form.cleaned_data['input']
             users = [
                 (user.first_name, user.middle_name, user.last_name, str(user.pk))
                      for user in CustomUser.objects.filter(role='1')]
@@ -81,7 +81,6 @@ def search_by_name(request):
                     result.append(user[-1])
             queryset = [
                 StudentProfile.objects.get(user=int(pk)) for pk in result]
-
             context['queryset'] = queryset
     else:
         form = SearchByInputForm()
