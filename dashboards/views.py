@@ -187,7 +187,7 @@ def salary_rate_by_major(request):
     }
 
     with PdfPages(
-            '/home/TeachYourself/teachyourself.pythonanywhere.com/sers/static/files/salary_rate_by_major.pdf') as pdf:  # /home/TeachYourself/teachyourself.pythonanywhere.com/
+            '/home/TeachYourself/teachyourself.pythonanywhere.com/users/static/files/salary_rate_by_major.pdf') as pdf:  # /home/TeachYourself/teachyourself.pythonanywhere.com/
         for major in majors:
             print(major)
             res[major] = []
