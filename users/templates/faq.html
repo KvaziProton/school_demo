@@ -1,24 +1,58 @@
-    I. Did you know?
-        a. Baruch College is ranked among the region's and nation's top colleges by U.S. News & World Report, Forbes, Princeton Review, and others. Our campus is within easy reach of Wall Street, Midtown, and the global headquarters of major companies and non-profit and cultural organizations, giving students unparalleled internship, career, and networking opportunities. The College's more than 18,000 students, who speak more than 110 languages and trace their heritage to more than 170 countries, have been repeatedly named one of the most ethnically diverse student bodies in the United States
-    II. What makes Baruch different?
-        a. Baruch College is a dynamic community of scholars and distinguished professionals who educate one of the most diverse student populations in the United States. The College dates back nearly 170 years, to the founding in 1847 of the Free Academy, the first free public college in the nation, and has carried on a tradition of academic excellence, accessibility, and opportunity for students from every corner of New York City, the metropolitan region, and around the world.
-    III. Some stats about Baruch:
-North Region
-#5
-#20
-#3
-#9
-#11
-"Top Public Schools" for third consecutive year
-Best Regional Universities
-Least Debt Class, of 2017
-Schools With the Most International Students
-Most Innovative Schools
-Nationwide
-#40
-#62
-Nation’s Top Public Schools for Undergraduate Business Programs
-Best Undergraduate Business Programs
-Business Insider
-✔
-Best MBA Programs Under $15,000 a Year
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div style="width:1000px;">
+    <ul>
+        <li>I. Did you know?</li>
+        <ul>
+            <li>a. Baruch College is ranked among the region's and nation's top
+                colleges by U.S. News & World Report, Forbes, Princeton Review,
+                and others. Our campus is within easy reach of Wall Street, Midtown,
+                and the global headquarters of major companies and non-profit and
+                cultural organizations, giving students unparalleled internship,
+                career, and networking opportunities. The College's more than 18,000
+                students, who speak more than 110 languages and trace their heritage
+                to more than 170 countries, have been repeatedly named one of the
+                most ethnically diverse student bodies in the United States.
+            </li>
+        </ul>
+        <li>II. What makes Baruch different?</li>
+        <ul>
+            <li>a. Baruch College is a dynamic community of scholars and distinguished
+                professionals who educate one of the most diverse student
+                populations in the United States. The College dates back nearly
+                170 years, to the founding in 1847 of the Free Academy, the first
+                free public college in the nation, and has carried on a tradition
+                of academic excellence, accessibility, and opportunity for students
+                from every corner of New York City, the metropolitan region, and around the world.
+            </li>
+        </ul>
+        <li>Some stats about Baruch:</li>
+        <ul>
+            <li>North Region</li>
+            <li>
+                #5
+                #20
+                #3
+                #9
+                #11
+                "Top Public Schools" for third consecutive year
+                Best Regional Universities
+                Least Debt Class, of 2017
+            </li>
+            <li>
+                Schools With the Most International Students</li>
+            <li>
+                Most Innovative Schools</li><li> Nationwide
+                #40
+                #62
+                Nation’s Top Public Schools for Undergraduate Business Programs
+            <li>Best Undergraduate Business Programs</li>
+            <li>Business Insider</li>
+             <li>   ✔
+                Best MBA Programs Under $15,000 a Year
+            </li>
+        </ul>
+    </ul>
+</div>
+{% endblock %}

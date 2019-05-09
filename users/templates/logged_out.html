@@ -1,8 +1,12 @@
+{% extends "base.html" %}
 {% load static %}
-<head>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
-</head>
-You was logged out.<br>
-<a href="{% url 'login' %}">Log in</a> again
+
+{% block content %}
+<div class="container">
+    <div class="container-form">
+        <div class="container-form-title"> Log out</div>
+        <div class="form-footer-text">
+        You was logged out. <a href="{% url 'login' %}">Log in</a> again.</div>
+    </div>
+</div>
+{% endblock %}

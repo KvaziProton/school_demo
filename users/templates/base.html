@@ -1,0 +1,51 @@
+{% load static %}
+<html>
+<head>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<header>
+    <div class="header-navbar navbar">
+        <div><a class="logo" href="{% url 'dashboard' %}">We Connected</a></div>
+        {% if user.is_authenticated %}
+        <div class="navbar-item">Profile
+        <div class="submenu">
+            <div class="submenu-item"><a href="{% if user.is_superuser %}{% url 'admin-profile' %}{%else%}{% url 'profile' %}{% endif %}">Edit</a></div>
+        </div>
+        </div>
+        {% if user.is_superuser %}
+        <div class="navbar-item">Reports
+        <div class="submenu">
+            <div class="submenu-item"><a href="{% url 'graduation-rate' %}">Placement rate</a></div>
+            <div class="submenu-item"><a href="{% url 'industry-rate' %}">Popular industries</a></div>
+            <div class="submenu-item"><a href="{% url 'salary-rate' %}">Average salary</a></div>
+            <div class="submenu-item"><a href="{% url 'major-rate' %}">Major's popularity</a></div>
+        </div>
+        </div>
+        {% endif %}
+        <div class="navbar-item">Search
+        <div class="submenu">
+            <div class="submenu-item"><a href="{% url 'company-search' %}">By company</a></div>
+            <div class="submenu-item"><a href="{% url 'name-search' %}">By name</a></div>
+            <div class="submenu-item"><a href="{% url 'major-search' %}">By department</a></div>
+        </div>
+        </div>
+        <div class="navbar-item">Settings
+        <div class="submenu">
+            <div class="submenu-item"><a href="{% url 'logout' %}">Logout</a></div>
+            <div class="submenu-item"><a href="{% url 'faq' %}">FAQ</a> </div>
+        </div></div>
+        {% else %}
+        <div class="non-auth">
+        <div><a href="{% url 'login' %}">Log In</a></div>
+        <div style="color: hsla(0,0%,100%,0.6);">or</div>
+        <div><a href="{% url 'signup' %}">Sign Up</a> </div>
+        </div>
+        {% endif %}
+    </div>
+</header>
+{% block content %}
+{% endblock content%}
+<footer></footer>
+</html>

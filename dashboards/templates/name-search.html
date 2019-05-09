@@ -1,27 +1,40 @@
-<form method="post" action="">
-    {% csrf_token %}
-    Input name: {{form.input}}
-    <input type="submit" value="Search">
-</form>
-<a href="{% url 'dashboard' %}">Go back</a>
-<br>
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <div class="container-form">
+        <div class="container-search-form-title">Search by student name</div>
+        <form class="container-search-form-body" method="post" action="">
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <td>Name:</td>
+                    <td>{{form.input}}</td>
+                </tr>
+            </table>
+            <button class="btn" type="submit">Search</button>
+        </form>
 {% if not init %}
 {% if not queryset %}
-No information regarding this was found.
+<div class="form-footer">No information regarding this was found.</div>
 {% else %}
-<table>
-    <tr>
-        <td>Student name</td>
-        <td>Degree</td>
-        <td>Phone number</td>
-    </tr>
-{% for q in queryset %}
-    <tr>
-        <td>{{ q.user.first_name }} {{ q.user.middle_name }} {{ q.user.last_name }}</td>
-        <td>{{ q.get_degree_type_display }}</td>
-        <td>{{ q.user.studentprofile.phone_number}}</td>
-    </tr>
-{% endfor %}
-</table>
+    <div class="container-form-title">Results</div>
+        <table>
+            <tr>
+                <td>Student name</td>
+                <td>Degree</td>
+                <td>Phone number</td>
+            </tr>
+        {% for q in queryset %}
+            <tr>
+                <td>{{ q.user.first_name }} {{ q.user.middle_name }} {{ q.user.last_name }}</td>
+                <td>{{ q.get_degree_type_display }}</td>
+                <td>{{ q.user.studentprofile.phone_number}}</td>
+            </tr>
+        {% endfor %}
+        </table>
 {% endif %}
 {% endif %}
+    </div>
+</div>
+{% endblock %}

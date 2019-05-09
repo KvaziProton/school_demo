@@ -1,31 +1,44 @@
-<form method="post" action="">
-    {% csrf_token %}
-    Input company name: {{form.input}}
-    <input type="submit" value="Search">
-</form>
-<a href="{% url 'dashboard' %}">Go back</a>
-<br>
-{% if not init %}
-{% if not queryset %}
-No information regarding this was found.
-{% else %}
-<table>
-    <tr>
-        <td>Student name</td>
-        <td>Job role</td>
-        <td>Job status</td>
-        <td>Contact</td>
-    </tr>
-{% for query in queryset %}
-    {% for q in query %}
-    <tr>
-        <td>{{ q.user.first_name }} {{ q.user.middle_name }} {{ q.user.last_name }}</td>
-        <td>{{ q.job_role }}</td>
-        <td>{% if q.employment_end_date%}Retired{% else %}Currently working{% endif %}</td>
-        <td>{{ q.company.phone_number }}</td>
-    </tr>
-    {% endfor %}
-{% endfor %}
-</table>
-{% endif %}
-{% endif %}
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <div class="container-form">
+        <div class="container-search-form-title">Search by company name</div>
+        <form class="container-search-form-body" method="post" action="">
+        {% csrf_token %}
+            <table>
+                <tr>
+                    <td>Company name:</td>
+                    <td>{{form.input}}</td>
+                </tr>
+            </table>
+            <button class="btn" type="submit">Search</button>
+        </form>
+        {% if not init %}
+        {% if not queryset %}
+        <div class="form-footer">No information regarding this was found.</div>
+        {% else %}
+        <div class="container-form-title">Results</div>
+        <table>
+            <tr>
+                <td>Student name</td>
+                <td>Job role</td>
+                <td>Job status</td>
+                <td>Contact</td>
+            </tr>
+        {% for query in queryset %}
+            {% for q in query %}
+            <tr>
+                <td>{{ q.user.first_name }} {{ q.user.middle_name }} {{ q.user.last_name }}</td>
+                <td>{{ q.job_role }}</td>
+                <td>{% if q.employment_end_date%}Retired{% else %}Currently working{% endif %}</td>
+                <td>{{ q.company.phone_number }}</td>
+            </tr>
+            {% endfor %}
+        {% endfor %}
+        </table>
+        {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -49,7 +49,7 @@ def search_by_company(request):
     if request.method == 'POST':
         form = SearchByInputForm(request.POST)
         if form.is_valid():
-            company_name = form.cleaned_data['input']
+            company_name = form.cleaned_data['input'].lower().capitalize()
             companies = Company.objects.filter(company_name=company_name)
 
             queryset = []

@@ -70,9 +70,13 @@ class LoginForm(forms.Form):
         }))
 
 class CareerForm(forms.ModelForm):
+
     job_role = forms.CharField()
-    employment_start_date = forms.CharField()
-    employment_end_date = forms.CharField(required=False)
+    employment_start_date = forms.CharField\
+        (widget=forms.TextInput(attrs={'placeholder': '2019-01-01'}))
+    employment_end_date = forms.CharField(
+        required=False, widget=forms.TextInput(
+            attrs={'placeholder': '2019-05-30'}))
     enrollment_status = forms.ChoiceField(choices=ENROLLEMENT_STATUS_CHOICES)
     salary_range = forms.ChoiceField(choices=SALARY_RANGE_CHOICES)
     class Meta:
@@ -80,6 +84,11 @@ class CareerForm(forms.ModelForm):
         exclude = ['id', 'creation_date']
 
 class ProfileForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ProfileForm, self).__init__(*args, **kwargs)
+        self.fields['graduation_date'].widget.attrs[
+            'placeholder'] = '2019-05-30'
+
     first_name = forms.CharField()
     middle_name = forms.CharField(required=False)
     last_name = forms.CharField()

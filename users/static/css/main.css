@@ -1,10 +1,19 @@
 .header-navbar {
     display: flex;
-    flex-direction: row;
+
     list-style: none;
-    width: 600px;
     justify-content: space-around;
-    border: 3px solid;
+    text-align: initial;
+    font-size: 16px;
+    align-items: center;
+    background-color: #1babbc;
+    color: white;
+}
+a {
+    text-decoration: none;
+}
+.header-navbar a {
+color: white;
 }
 .submenu {
     display: none;
@@ -12,9 +21,93 @@
 .navbar-item:hover {
     cursor: pointer;
 }
-.navbar-item:hover > ul.submenu {
-    display: block;
+.navbar-item:hover > div.submenu {
+    background-color: #1babbc;
+    display: flex;
+    flex-direction: column;
     position:absolute;
-    list-style: none;
+
+    width: 180px;
+    justify-content: space-around;
+    padding: 10px 0 10px 10px;
 }
 
+.container {
+    margin-top: 60px;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.container-form {
+    display:flex;
+    align-items: flex-start;
+    flex-direction: column;
+}
+.container-search-form-body {
+    display:flex;
+    align-items: flex-start;
+    flex-direction: row;
+    align-items: end;
+}
+.container-form-body {
+    display:flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+td {
+    padding: 10px;
+}
+
+.container-form-title {
+    font-size: 16px;
+    padding: 10px;
+    border-bottom: 5px solid #1babbc;
+    width: 100%;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.container-search-form-title {
+    font-weight: bold;
+    font-size: 16px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.form-footer-text {
+    padding: 10px;
+}
+.form-footer {
+    padding: 10px;
+    display:flex;
+}
+
+.non-auth {
+    display: flex;
+    flex-direction: row;
+    width: 144px;
+    justify-content: space-around;
+}
+
+.my-btn {
+    display: block;
+    padding: 15px 56px;
+    margin: 10px;
+    color: black;
+    background-color: lightgray;
+}
+.my-btn:hover {
+    text-decoration: none;
+    background-color: white;
+    color: black;
+}
+.btn {
+    padding: 15px 56px;
+}
+.errorlist li {
+    list-style: none;
+    border: 2px solid red;
+    padding: 5px;
+}

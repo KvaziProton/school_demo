@@ -1,7 +1,15 @@
-    <form method="post" action="">
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="container-form">
+        <div class="container-form-title"> Fill in career info</div>
+        <form class="container-form-body" method="post" action="">
         {% csrf_token %}
-
-              {{ form.as_p }}
-
-        <button class="btn" type="submit" value="Login">Save</button>
-    </form>
+            <table>{{ form.as_table }}</table>
+        <button class="btn" type="submit">Save</button>
+        </form>
+    </div>
+</div>
+{%endblock%}
