@@ -94,7 +94,7 @@ td {
 .my-btn {
     display: block;
     padding: 15px 56px;
-    margin: 10px;
+    margin-right: 10px;
     color: black;
     background-color: lightgray;
 }
