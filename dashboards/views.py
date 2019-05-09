@@ -174,7 +174,7 @@ def salary_rate_by_major(request):
         '4':'80,000 to 90,000',
         '5':'90,000 to 100,000'
     }
-    with PdfPages('/static/files/salary_rate_by_major.pdf') as pdf:
+    with PdfPages('users/static/files/salary_rate_by_major.pdf') as pdf:
         for major in majors:
             profiles = StudentProfile.objects.filter(major1=major)
             if profiles:
