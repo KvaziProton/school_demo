@@ -111,11 +111,13 @@ def graduation_rate(request):
     f = figure(figsize=(6,6))
 
     ax = axes([0.1, 0.1, 0.8, 0.8])
-    labels = 'Frogs', 'Hogs'
+    labels = 'Within 6 months', 'Over 6 months'
     fracs = [res, (100-res) ]
     explode=(0, 0.05)
     pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%', shadow=True)
-    title('Random data', bbox={'facecolor':'0.8', 'pad':5})
+    title(
+        'Percentage of students who got jobs within 6 months of graduation',
+        bbox={'facecolor':'0.8', 'pad':5})
 
     # FigureCanvasAgg(f)
     buf = io.BytesIO()
@@ -150,10 +152,10 @@ def studend_per_industry_rate(request):
     f = figure(figsize=(6, 6))
 
     ax = axes([0.1, 0.1, 0.8, 0.8])
-    explode = [0 for i in range(working_students)]
+    explode = [0 for i in range(len(industries))]
     explode[1] = 0.05
     pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%', shadow=True)
-    title('Student per industry rate', bbox={'facecolor': '0.8', 'pad': 5})
+    title('Percentage of students employed in each industry', bbox={'facecolor': '0.8', 'pad': 5})
 
     # FigureCanvasAgg(f)
     buf = io.BytesIO()
@@ -168,11 +170,11 @@ def salary_rate_by_major(request):
     salary_range = {
         '1':'50,000 to 60,000',
         '2':'60,000 to 70,000',
-        '3': '70,000 to 80,000',
+        '3':'70,000 to 80,000',
         '4':'80,000 to 90,000',
         '5':'90,000 to 100,000'
     }
-    with PdfPages('users/static/files/salary_rate_by_major.pdf') as pdf:
+    with PdfPages('/static/files/salary_rate_by_major.pdf') as pdf:
         for major in majors:
             profiles = StudentProfile.objects.filter(major1=major)
             if profiles:
@@ -196,7 +198,7 @@ def salary_rate_by_major(request):
                 figure(figsize=(6, 6))
 
                 ax = axes([0.1, 0.1, 0.8, 0.8])
-                explode = [0 for _ in range(len(res[major]))]
+                explode = [0 for _ in range(len(labels))]
                 try:
                     explode[1] = 0.05
                 except IndexError:
