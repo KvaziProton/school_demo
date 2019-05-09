@@ -22,14 +22,16 @@
         <table>
             <tr>
                 <td>Student name</td>
-                <td>Degree</td>
-                <td>Phone number</td>
+                <td>Industry</td>
+                <td>Company</td>
+                <td>Salary range</td>
             </tr>
         {% for q in queryset %}
             <tr>
                 <td>{{ q.user.first_name }} {{ q.user.middle_name }} {{ q.user.last_name }}</td>
-                <td>{{ q.get_degree_type_display }}</td>
-                <td>{{ q.user.studentprofile.phone_number}}</td>
+                <td>{{ q.company.industry_type}}</td>
+                <td>{{ q.company}}</td>
+                <td>{{q.get_salary_range_display}}</td>
             </tr>
         {% endfor %}
         </table>

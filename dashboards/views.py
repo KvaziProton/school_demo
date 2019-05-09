@@ -1,6 +1,6 @@
 import io
 from collections import Counter
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 import matplotlib
 matplotlib.use('Agg')
@@ -57,6 +57,7 @@ def search_by_company(request):
                 queryset.append(StudentCareer.objects.filter(company=company.pk))
 
             context['queryset'] = queryset
+            context['current_date'] = datetime.today()
     else:
         form = SearchByInputForm()
         context['init'] = True
@@ -83,9 +84,10 @@ def search_by_name(request):
             queryset = []
             for pk in result:
                 try:
-                    queryset.append(StudentProfile.objects.get(user=int(pk)))
+                    queryset.append(StudentCareer.objects.filter(user=int(pk)).order_by('employment_start_date')[0])
                 except:
                     pass
+            print(queryset)
             context['queryset'] = queryset
     else:
         form = SearchByInputForm()
@@ -100,11 +102,17 @@ def graduation_rate(request):
     count = 0
 
     for student in students:
-        gr_date = student.studentprofile.graduation_date
-        first_emp_date = StudentCareer.objects.filter(
-            user=student).order_by('employment_start_date')[0].employment_start_date
-        if gr_date + timedelta(days=6 * 30) <= first_emp_date:
-            count += 1
+        try:
+            gr_date = student.studentprofile.graduation_date
+        except:
+            pass
+        else:
+            first_emp_date = StudentCareer.objects.filter(
+                user=student).order_by('employment_start_date')[0].employment_start_date
+
+            if gr_date + timedelta(days=6 * 30) >= first_emp_date:
+                print(gr_date + timedelta(days=6 * 30), first_emp_date)
+                count += 1
 
     res = count/(len(students)/100)
 
@@ -114,10 +122,10 @@ def graduation_rate(request):
     labels = 'Within 6 months', 'Over 6 months'
     fracs = [res, (100-res) ]
     explode=(0, 0.05)
-    pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%', shadow=True)
+    pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%')
     title(
         'Percentage of students who got jobs within 6 months of graduation',
-        bbox={'facecolor':'0.8', 'pad':5})
+        bbox={'facecolor':'0.9', 'pad':5})
 
     # FigureCanvasAgg(f)
     buf = io.BytesIO()
@@ -131,11 +139,14 @@ def studend_per_industry_rate(request):
 
     industry_list = []
     for student in students:
-        industry = StudentCareer.objects.filter(
-            user=student).order_by(
-            'employment_start_date')[0].company.industry_type
-
-        industry_list.append(industry)
+        try:
+            industry = StudentCareer.objects.filter(
+                user=student).order_by(
+                'employment_start_date')[0].company.industry_type
+        except IndexError:
+            pass
+        else:
+            industry_list.append(industry)
 
     labels = []
     fracs = []
@@ -151,10 +162,10 @@ def studend_per_industry_rate(request):
 
     f = figure(figsize=(6, 6))
 
-    ax = axes([0.1, 0.1, 0.8, 0.8])
+    axes([0.1, 0.1, 0.8, 0.8])
     explode = [0 for i in range(len(industries))]
     explode[1] = 0.05
-    pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%', shadow=True)
+    pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%', radius=0.8)
     title('Percentage of students employed in each industry', bbox={'facecolor': '0.8', 'pad': 5})
 
     # FigureCanvasAgg(f)
@@ -165,60 +176,59 @@ def studend_per_industry_rate(request):
     return response
 
 def salary_rate_by_major(request):
-    # majors = Major.objects.all()
-    # res = {}
-    # salary_range = {
-    #     '1':'50,000 to 60,000',
-    #     '2':'60,000 to 70,000',
-    #     '3':'70,000 to 80,000',
-    #     '4':'80,000 to 90,000',
-    #     '5':'90,000 to 100,000'
-    # }
-    #
-    # with PdfPages(
-    #         '/home/TeachYourself/teachyourself.pythonanywhere.com/users/static/files/salary_rate_by_major.pdf') as pdf:
-    #     print(majors)
-    #     for major in majors:
-    #         print(major)
-    #         res[major] = []
-    #         profiles = StudentProfile.objects.filter(major1=major)
-    #         if profiles:
-    #             for profile in profiles:
-    #                 careers = StudentCareer.objects.filter(user=profile.user)
-    #                 if careers:
-    #                     current_salary_range = careers.order_by('employment_start_date')[0].salary_range
-    #                     res[major].append(current_salary_range)
-    #
-    #                 res[major].append(current_salary_range)
-    #             labels = []
-    #             fracs = []
-    #             counter = Counter(res[major])
-    #             print(counter)
-    #
-    #             for salary in set(res[major]):
-    #                 percent = counter[salary] / (len(res[major]) / 100)
-    #                 fracs.append(percent)
-    #                 labels.append(salary_range[salary])
-    #
-    #             figure(figsize=(6, 6))
-    #
-    #             ax = axes([0.1, 0.1, 0.8, 0.8])
-    #             explode = [0 for _ in range(len(labels))]
-    #             try:
-    #                 explode[1] = 0.05
-    #             except IndexError:
-    #                 pass
-    #             pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%',
-    #                 shadow=True, radius=0.8)
-    #             title('Salary rate by major: ' + major.major_name,
-    #                   bbox={'facecolor': '0.8', 'pad': 5})
-    #             plt.gcf().subplots_adjust(bottom=0.15)
-    #             pdf.savefig()  # saves the current figure into a pdf page
-    #             plt.close()
-    #
-    #     # We can also set the file's metadata via the PdfPages object:
-    #     d = pdf.infodict()
-    #     d['Title'] = 'Salary range by major'
+    majors = Major.objects.all()
+    res = {}
+    salary_range = {
+        '1':'50,000 to 60,000',
+        '2':'60,000 to 70,000',
+        '3':'70,000 to 80,000',
+        '4':'80,000 to 90,000',
+        '5':'90,000 to 100,000'
+    }
+
+    with PdfPages(
+            '/home/TeachYourself/teachyourself.pythonanywhere.com/sers/static/files/salary_rate_by_major.pdf') as pdf:  # /home/TeachYourself/teachyourself.pythonanywhere.com/
+        for major in majors:
+            print(major)
+            res[major] = []
+            profiles = StudentProfile.objects.filter(major1=major)
+            if profiles:
+                for profile in profiles:
+                    careers = StudentCareer.objects.filter(user=profile.user)
+                    if careers:
+                        current_salary_range = careers.order_by('employment_start_date')[0].salary_range
+                        res[major].append(current_salary_range)
+
+                    res[major].append(current_salary_range)
+                labels = []
+                fracs = []
+                counter = Counter(res[major])
+                print(counter)
+
+                for salary in set(res[major]):
+                    percent = counter[salary] / (len(res[major]) / 100)
+                    fracs.append(percent)
+                    labels.append(salary_range[salary])
+
+                figure(figsize=(6, 6))
+
+                ax = axes([0.1, 0.1, 0.8, 0.8])
+                explode = [0 for _ in range(len(labels))]
+                try:
+                    explode[0] = 0.05
+                except IndexError:
+                    pass
+                pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%',
+                    radius=0.8)
+                title('Salary rate by major: ' + major.major_name,
+                      bbox={'facecolor': '0.8', 'pad': 5})
+                plt.gcf().subplots_adjust(bottom=0.15)
+                pdf.savefig()  # saves the current figure into a pdf page
+                plt.close()
+
+        # We can also set the file's metadata via the PdfPages object:
+        d = pdf.infodict()
+        d['Title'] = 'Salary range by major'
 
     return HttpResponseRedirect('/static/files/salary_rate_by_major.pdf')
 
@@ -227,12 +237,15 @@ def student_rate_by_major(request):
 
     majors = []
     for student in students:
-        major1 = StudentProfile.objects.get(user=student).major1
-        major2 = StudentProfile.objects.get(user=student).major2
-
-        majors.append(major1)
-        if major2:
-            majors.append(major2)
+        try:
+            major1 = StudentProfile.objects.get(user=student).major1
+            major2 = StudentProfile.objects.get(user=student).major2
+        except StudentProfile.DoesNotExist:
+            pass
+        else:
+            majors.append(major1)
+            if major2:
+                majors.append(major2)
 
     counter = Counter(majors)
 
@@ -248,8 +261,8 @@ def student_rate_by_major(request):
 
     ax = axes([0.1, 0.1, 0.8, 0.8])
     explode = [0 for _ in range(len(labels))]
-    explode[1] = 0.05
-    pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%', shadow=True, radius=0.8)
+    explode[2] = 0.05
+    pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%', radius=0.7)
     title('Student per industry rate', bbox={'facecolor': '0.8', 'pad': 5})
 
     # FigureCanvasAgg(f)

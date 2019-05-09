@@ -31,7 +31,7 @@
             <tr>
                 <td>{{ q.user.first_name }} {{ q.user.middle_name }} {{ q.user.last_name }}</td>
                 <td>{{ q.job_role }}</td>
-                <td>{% if q.employment_end_date%}Retired{% else %}Currently working{% endif %}</td>
+                <td>{% if q.employment_end_date %}Retired{% else %}Currently working{% endif %}</td>
                 <td>{{ q.company.phone_number }}</td>
             </tr>
             {% endfor %}
