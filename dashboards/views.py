@@ -76,11 +76,16 @@ def search_by_name(request):
                 (user.first_name, user.middle_name, user.last_name, str(user.pk))
                      for user in CustomUser.objects.filter(role='1')]
             result = []
+
             for user in users:
                 if names in user:
                     result.append(user[-1])
-            queryset = [
-                StudentProfile.objects.get(user=int(pk)) for pk in result]
+            queryset = []
+            for pk in result:
+                try:
+                    queryset.append(StudentProfile.objects.get(user=int(pk)))
+                except:
+                    pass
             context['queryset'] = queryset
     else:
         form = SearchByInputForm()
@@ -235,7 +240,7 @@ def student_rate_by_major(request):
     f = figure(figsize=(6, 6))
 
     ax = axes([0.1, 0.1, 0.8, 0.8])
-    explode = [0 for _ in range(len(majors))]
+    explode = [0 for _ in range(len(labels))]
     explode[1] = 0.05
     pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%', shadow=True)
     title('Student per industry rate', bbox={'facecolor': '0.8', 'pad': 5})
