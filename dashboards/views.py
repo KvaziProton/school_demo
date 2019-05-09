@@ -73,8 +73,8 @@ def search_by_name(request):
         if form.is_valid():
             names = form.cleaned_data['input'].lower()
             users = [
-                (user.first_name.lower(), user.middle_name.lower(), user.last_name.lower(), str(user.pk))
-                     for user in CustomUser.objects.filter(role='1') if user]
+                (user.first_name, user.middle_name, user.last_name, str(user.pk))
+                     for user in CustomUser.objects.filter(role='1')]
             result = []
             for user in users:
                 if names in user:
