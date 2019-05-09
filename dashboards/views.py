@@ -165,60 +165,60 @@ def studend_per_industry_rate(request):
     return response
 
 def salary_rate_by_major(request):
-    majors = Major.objects.all()
-    res = {}
-    salary_range = {
-        '1':'50,000 to 60,000',
-        '2':'60,000 to 70,000',
-        '3':'70,000 to 80,000',
-        '4':'80,000 to 90,000',
-        '5':'90,000 to 100,000'
-    }
-
-    with PdfPages(
-            '/home/TeachYourself/teachyourself.pythonanywhere.com/users/static/files/salary_rate_by_major.pdf') as pdf:
-        print(majors)
-        for major in majors:
-            print(major)
-            res[major] = []
-            profiles = StudentProfile.objects.filter(major1=major)
-            if profiles:
-                for profile in profiles:
-                    careers = StudentCareer.objects.filter(user=profile.user)
-                    if careers:
-                        current_salary_range = careers.order_by('employment_start_date')[0].salary_range
-                        res[major].append(current_salary_range)
-
-                    res[major].append(current_salary_range)
-                labels = []
-                fracs = []
-                counter = Counter(res[major])
-                print(counter)
-
-                for salary in set(res[major]):
-                    percent = counter[salary] / (len(res[major]) / 100)
-                    fracs.append(percent)
-                    labels.append(salary_range[salary])
-
-                figure(figsize=(6, 6))
-
-                ax = axes([0.1, 0.1, 0.8, 0.8])
-                explode = [0 for _ in range(len(labels))]
-                try:
-                    explode[1] = 0.05
-                except IndexError:
-                    pass
-                pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%',
-                    shadow=True, radius=0.8)
-                title('Salary rate by major: ' + major.major_name,
-                      bbox={'facecolor': '0.8', 'pad': 5})
-                plt.gcf().subplots_adjust(bottom=0.15)
-                pdf.savefig()  # saves the current figure into a pdf page
-                plt.close()
-
-        # We can also set the file's metadata via the PdfPages object:
-        d = pdf.infodict()
-        d['Title'] = 'Salary range by major'
+    # majors = Major.objects.all()
+    # res = {}
+    # salary_range = {
+    #     '1':'50,000 to 60,000',
+    #     '2':'60,000 to 70,000',
+    #     '3':'70,000 to 80,000',
+    #     '4':'80,000 to 90,000',
+    #     '5':'90,000 to 100,000'
+    # }
+    #
+    # with PdfPages(
+    #         '/home/TeachYourself/teachyourself.pythonanywhere.com/users/static/files/salary_rate_by_major.pdf') as pdf:
+    #     print(majors)
+    #     for major in majors:
+    #         print(major)
+    #         res[major] = []
+    #         profiles = StudentProfile.objects.filter(major1=major)
+    #         if profiles:
+    #             for profile in profiles:
+    #                 careers = StudentCareer.objects.filter(user=profile.user)
+    #                 if careers:
+    #                     current_salary_range = careers.order_by('employment_start_date')[0].salary_range
+    #                     res[major].append(current_salary_range)
+    #
+    #                 res[major].append(current_salary_range)
+    #             labels = []
+    #             fracs = []
+    #             counter = Counter(res[major])
+    #             print(counter)
+    #
+    #             for salary in set(res[major]):
+    #                 percent = counter[salary] / (len(res[major]) / 100)
+    #                 fracs.append(percent)
+    #                 labels.append(salary_range[salary])
+    #
+    #             figure(figsize=(6, 6))
+    #
+    #             ax = axes([0.1, 0.1, 0.8, 0.8])
+    #             explode = [0 for _ in range(len(labels))]
+    #             try:
+    #                 explode[1] = 0.05
+    #             except IndexError:
+    #                 pass
+    #             pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%',
+    #                 shadow=True, radius=0.8)
+    #             title('Salary rate by major: ' + major.major_name,
+    #                   bbox={'facecolor': '0.8', 'pad': 5})
+    #             plt.gcf().subplots_adjust(bottom=0.15)
+    #             pdf.savefig()  # saves the current figure into a pdf page
+    #             plt.close()
+    #
+    #     # We can also set the file's metadata via the PdfPages object:
+    #     d = pdf.infodict()
+    #     d['Title'] = 'Salary range by major'
 
     return HttpResponseRedirect('/static/files/salary_rate_by_major.pdf')
 
