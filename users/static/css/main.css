@@ -130,3 +130,7 @@ body {
     z-index: 600;
     height: 100%;
 }
+
+.head {
+    font-weight: bold;
+}

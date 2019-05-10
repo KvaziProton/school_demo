@@ -20,12 +20,12 @@
 {% else %}
     <div class="container-form-title">Results</div>
         <table>
-            <tr>
+            <th class="head">
                 <td>Student name</td>
                 <td>Industry</td>
                 <td>Company</td>
                 <td>Salary range</td>
-            </tr>
+            </th>
         {% for q in queryset %}
             <tr>
                 <td>{{ q.user.first_name }} {{ q.user.middle_name }} {{ q.user.last_name }}</td>
