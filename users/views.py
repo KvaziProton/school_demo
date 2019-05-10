@@ -71,9 +71,8 @@ class ProfileCreateView(LoginRequiredMixin, FormView):
         try:
             profile = student.studentprofile
         except:
-            initial['creation'] = True
+            pass
         else:
-            initial['creation'] = False
             for value in self.form_class().fields.keys():
                 initial[value] = getattr(profile, value)
         finally:
@@ -107,6 +106,12 @@ class ProfileCreateView(LoginRequiredMixin, FormView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         student = CustomUser.objects.get(username=str(user))
+        try:
+            profile = student.studentprofile
+        except:
+            profile=[]
+        finally:
+            context['profile'] = profile
         try:
             careers = StudentCareer.objects.filter(
                 user=student).order_by('employment_start_date')
@@ -191,3 +196,25 @@ class AdminProfileView(ProfileCreateView):
                 initial[value] = getattr(profile, value)
         finally:
             return initial
+
+def show_profile(request):
+    if request.method == 'GET':
+        context = {}
+        user = request.user
+        student = CustomUser.objects.get(username=str(user))
+        try:
+            careers = StudentCareer.objects.filter(
+                user=student).order_by('employment_start_date')
+        except:
+            careers = []
+        finally:
+            context['careers'] = careers
+
+        try:
+            profile = StudentProfile.objects.get(user=user)
+        except:
+            context['profile'] = []
+        else:
+            context['profile'] = profile
+
+        return render(request, 'show-profile.html', context)

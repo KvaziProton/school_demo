@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <div class="container-form">
+        <div class="container-form-title">Your Profile</div>
+        <div class="container-form-body">
+            {% if profile %}
+            <table>
+                <td> Name: </td>
+                <td>{{ profile.user.first_name }} {{ profile.user.middle_name }} {{ profile.user.last_name }}</td>
+                </tr>
+                <tr>
+                    <td>Gender:</td>
+                    <td>{{ profile.get_gender_display }}</td>
+                </tr>
+                <tr>
+                    <td>Phone number</td>
+                    <td>{{ profile.phone_number }}</td>
+                </tr>
+                <tr>
+                    <td>Email:</td>
+                    <td>{{ profile.user.email }}</td>
+                </tr>
+                    {% if not user.is_superuser %}
+                    <tr>
+                        <td>Major:</td>
+                        <td>{{ profile.major1}}</td>
+                    </tr>
+                        {% if profile.major2 %}
+                        <tr>
+                            <td>Major:</td>
+                            <td>{{ profile.major2 }}</td>
+                        </tr>
+                        {% endif %}
+                    <tr>
+                        <td>Degree:</td>
+                        <td>{{ profile.get_degree_type_display }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Graduation_date:</td>
+                        <td>{{ profile.graduation_date }}</td>
+                    </tr>
+                    {%endif%}
+            </table>
+
+        </div>
+
+        {% else %}
+        <div class="form-footer">You don't have the profile info.</div>
+        {%endif%}
+        {% for career in careers %}
+<div class="container-form">
+    <div class="container-form-title"> Your Career</div>
+    <div class="container-form-body">
+        <table>
+            <tr>
+                <td>Company name: </td>
+                <td>{{ career.company }}</td>
+            </tr>
+            <tr>
+                <td>Job name: </td>
+                <td>{{ career.job_role }}</td>
+            </tr>
+            <tr>
+                <td>Employment start date: </td>
+                <td>{{ career.employment_start_date }}</td>
+            </tr>
+            {% if career.employment_end_date %}
+            <tr>
+                <td>Employment end date: </td>
+                <td>{{ career.employment_end_date }}</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td>Enrollment status: </td>
+                <td>{{ career.get_enrollment_status_display }}</td>
+            </tr>
+                <tr>
+                <td>Salary range: </td>
+                <td>{{ career.get_salary_range_display }}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+{% endfor %}
+
+    <div class="form-footer">
+    <a class="my-btn" href="{% if user.is_superuser %}{% url 'admin-profile' %}{%else%}{% url 'profile' %}{% endif %}">Edit profile</a>
+    <a class="my-btn" href="{% url 'dashboard' %}">Go back to dashboard</a>
+    </div>
+{%endblock%}

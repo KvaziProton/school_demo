@@ -72,7 +72,7 @@ def search_by_name(request):
     if request.method == 'POST':
         form = SearchByInputForm(request.POST)
         if form.is_valid():
-            names = form.cleaned_data['input']
+            names = form.cleaned_data['input'].capitalize()
             users = [
                 (user.first_name, user.middle_name, user.last_name, str(user.pk))
                      for user in CustomUser.objects.filter(role='1')]
@@ -107,12 +107,13 @@ def graduation_rate(request):
         except:
             pass
         else:
-            first_emp_date = StudentCareer.objects.filter(
-                user=student).order_by('employment_start_date')[0].employment_start_date
+            emp_date = StudentCareer.objects.filter(
+                user=student).order_by('employment_start_date')
+            if emp_date:
+                first_emp_date = emp_date[0].employment_start_date
 
-            if gr_date + timedelta(days=6 * 30) >= first_emp_date:
-                print(gr_date + timedelta(days=6 * 30), first_emp_date)
-                count += 1
+                if gr_date + timedelta(days=6 * 30) >= first_emp_date:
+                    count += 1
 
     res = count/(len(students)/100)
 

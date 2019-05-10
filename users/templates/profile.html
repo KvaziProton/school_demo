@@ -52,9 +52,13 @@
                     <td>{{ form.graduation_date }}</td>
                 </tr>
             </table>
+            {% if not profile %}
+            <button class="btn" type="submit">Add profile</button>
+            {%else%}
             <button class="btn" type="submit">Edit profile</button>
+            {% endif %}
         </form>
-{% if creation %}
+{% if not profile %}
 <div class="form-footer">Please, fill in info to be able to add the career info.</div>
 {% else %}
 {% for career in careers %}
@@ -97,8 +101,8 @@
 {% endfor %}
     <div class="form-footer">
     {% if not user.is_superuser %}
-    <a class="my-btn" href="{% url 'add-career' %}">Add career</a>
-    <a class="my-btn" href="{% url 'dashboard' %}">Go back</a>
+    <a class="my-btn" href="{% url 'add-career' %}">Add career info</a>
+    <a class="my-btn" href="{% url 'dashboard' %}">Go back to dashboard</a>
     {%endif%}
     {% endif %}
     </div>

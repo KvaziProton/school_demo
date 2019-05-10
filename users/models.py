@@ -98,7 +98,6 @@ class StudentProfile(models.Model):
 class AdminProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     gender = models.CharField(max_length=2, choices=GENDER_CHOICES)
-    major1 = models.ForeignKey(Major, on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=20,
                                     validators=[validate_phone_number])
     # admin_title = models.CharField(max_length=200)

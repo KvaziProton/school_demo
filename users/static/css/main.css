@@ -1,6 +1,5 @@
 .header-navbar {
     display: flex;
-
     list-style: none;
     justify-content: space-around;
     text-align: initial;
@@ -8,6 +7,7 @@
     align-items: center;
     background-color: #1babbc;
     color: white;
+    z-index: 1000;
 }
 a {
     text-decoration: none;
@@ -31,7 +31,9 @@ color: white;
     justify-content: space-around;
     padding: 10px 0 10px 10px;
 }
-
+.logo {
+    font-weight: bold;
+}
 .container {
     margin-top: 60px;
     display:flex;
@@ -43,6 +45,12 @@ color: white;
     display:flex;
     align-items: flex-start;
     flex-direction: column;
+    background: white;
+    opacity: 0.9;
+    z-index: 950;
+}
+label {
+margin: 5px;
 }
 .container-search-form-body {
     display:flex;
@@ -102,12 +110,23 @@ td {
     text-decoration: none;
     background-color: white;
     color: black;
+    margin-right: 5px;
 }
 .btn {
     padding: 15px 56px;
+    margin-right: 5px;
 }
 .errorlist li {
     list-style: none;
     border: 2px solid red;
     padding: 5px;
+}
+
+body {
+    background: url('../images/weissman-banner.jpg')
+    no-repeat;
+    background-size: cover;
+    overflow: hidden;
+    z-index: 600;
+    height: 100%;
 }
